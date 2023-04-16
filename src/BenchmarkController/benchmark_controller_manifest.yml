@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: benchmark-controller
+  labels:
+    app: benchmark-controller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: benchmark-controller
+  template:
+    metadata:
+      labels:
+        app: benchmark-controller
+      annotations:
+          'consul.hashicorp.com/connect-inject': 'true'
+    spec:
+      containers:
+      - name: benchmark-controller
+        image: benchmarkcontroller:1.0
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: benchmark-controller-service
+spec:
+  selector:
+    app: benchmark-controller
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 5000
+---
